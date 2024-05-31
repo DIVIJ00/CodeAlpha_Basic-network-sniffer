@@ -1,0 +1,25 @@
+from scapy.all import sniff, IP, TCP, UDP
+
+def packet_callback(packet):
+    if IP in packet:
+        ip_src = packet[IP].src
+        ip_dst = packet[IP].dst
+        protocol = packet[IP].proto
+
+        if TCP in packet:
+            sport = packet[TCP].sport
+            dport = packet[TCP].dport
+            proto = 'TCP'
+        elif UDP in packet:
+            sport = packet[UDP].sport
+            dport = packet[UDP].dport
+            proto = 'UDP'
+        else:
+            sport = None
+            dport = None
+            proto = 'Other'
+
+        print(f"IP src: {ip_src} -> IP dst: {ip_dst} | Protocol: {proto} | Sport: {sport} -> Dport: {dport}")
+
+# Sniffing the first 10 packets on the default network interface
+sniff(count=10, prn=packet_callback, store=0)
